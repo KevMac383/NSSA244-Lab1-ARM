@@ -1,6 +1,8 @@
 # NSSA244-Lab1-ARM
-Description
+
+# Description
 This repository contains an Azure Resource Manager (ARM) template exported from the RG-LAB1 resource group. This template captures the environment as Infrastructure as Code (IaC), serving as a reusable blueprint for automated, repeatable deployments.
+
 The template deploys the following cloud infrastructure:
 • Resource Group: RG-LAB1.
 • Virtual Network: VNET-LAB1 (Address Space: 10.10.0.0/16) with a dedicated subnet SUBNET-WEB (10.10.1.0/24).
@@ -9,5 +11,5 @@ The template deploys the following cloud infrastructure:
 • Storage: A managed OS disk and an additional 16 GiB managed data disk (WEB1-DATA1) formatted with an ext4 filesystem and mounted to /data.
 • Web Services: The environment is prepared to host an Apache web server.
 
-Export Date
+# Export Date
 The infrastructure was exported on January 27, 2026.
