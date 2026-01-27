@@ -1,5 +1,3 @@
-# NSSA244-Lab1-ARM
-
 # Description
 This repository contains an Azure Resource Manager (ARM) template exported from the RG-LAB1 resource group. This template captures the environment as Infrastructure as Code (IaC), serving as a reusable blueprint for automated, repeatable deployments.
 
