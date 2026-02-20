@@ -13,3 +13,11 @@ Export Date: January 27, 2026.
 
 # Updated Template 
 Several properties included by the Azure portal export were removed because they are not valid for repeatable deployments. References to existing managed disk IDs were eliminated and disk creation options were adjusted so that disks are created during deployment. The requireGuestProvisionSignal property was also removed because it depends on a subscription feature that is not enabled. These changes ensure the template is valid, reusable, and able to deploy successfully without dependency or configuration errors.
+
+# Lab 2: Activity 2 
+The template was updated further to provide the following:  
+• Two web servers deployed from a single ARM template  
+• Identical configuration across instances  
+• Independent access paths to each server  
+
+Note: This template does not  provide automatic traffic distribution or failover
