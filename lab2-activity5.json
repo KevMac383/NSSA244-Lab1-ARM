@@ -46,10 +46,6 @@
             "defaultValue": "web1675_z1",
             "type": "String"
         },
-        "networkInterfaces_web1992_z1_name": {
-            "defaultValue": "web1992_z1",
-            "type": "String"
-        },
         "networkInterfaces_web2_nic_name": {
             "defaultValue": "web2-nic",
             "type": "String"
@@ -64,6 +60,14 @@
         },
         "networkSecurityGroups_WEB1_nsg_name": {
             "defaultValue": "WEB1-nsg",
+            "type": "String"
+        },
+        "publicIPAddresses_WEB1ip931_name": {
+            "defaultValue": "WEB1ip931",
+            "type": "String"
+        },
+        "publicIPAddresses_WEB2_ip_name": {
+            "defaultValue": "WEB2-ip",
             "type": "String"
         }
     },
@@ -360,6 +364,48 @@
             }
         },
         {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2024-07-01",
+            "name": "[parameters('publicIPAddresses_WEB1ip931_name')]",
+            "location": "eastus2",
+            "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+            },
+            "zones": [
+                "1"
+            ],
+            "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "ddosSettings": {
+                    "protectionMode": "VirtualNetworkInherited"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2024-07-01",
+            "name": "[parameters('publicIPAddresses_WEB2_ip_name')]",
+            "location": "eastus2",
+            "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+            },
+            "zones": [
+                "1"
+            ],
+            "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "ddosSettings": {
+                    "protectionMode": "VirtualNetworkInherited"
+                }
+            }
+        },
+        {
             "type": "Microsoft.Network/loadBalancers",
             "apiVersion": "2024-07-01",
             "name": "[parameters('loadBalancers_LB_WEB_name')]",
@@ -429,6 +475,7 @@
             "name": "[parameters('networkInterfaces_web1675_z1_name')]",
             "location": "eastus2",
             "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_WEB1ip931_name'))]",
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_eastus2_name'), 'SUBNET-WEB1')]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG_WEB1_name'))]",
                 "[resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_LB_WEB_name'))]"
@@ -449,51 +496,13 @@
                                 {
                                     "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_LB_WEB_name')), '/backendAddressPools/LB-backend-pool')]"
                                 }
-                            ]
-                        }
-                    }
-                ],
-                "dnsSettings": {
-                    "dnsServers": []
-                },
-                "enableAcceleratedNetworking": true,
-                "enableIPForwarding": false,
-                "disableTcpStateTracking": false,
-                "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG_WEB1_name'))]"
-                },
-                "nicType": "Standard",
-                "auxiliaryMode": "None",
-                "auxiliarySku": "None"
-            }
-        },
-        {
-            "type": "Microsoft.Network/networkInterfaces",
-            "apiVersion": "2024-07-01",
-            "name": "[parameters('networkInterfaces_web1992_z1_name')]",
-            "location": "eastus2",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_eastus2_name'), 'SUBNET-WEB1')]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG_WEB1_name'))]",
-                "[resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_LB_WEB_name'))]"
-            ],
-            "kind": "Regular",
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig1",
-                        "properties": {
-                            "privateIPAllocationMethod": "Dynamic",
-                            "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_eastus2_name'), 'SUBNET-WEB1')]"
-                            },
-                            "primary": true,
-                            "privateIPAddressVersion": "IPv4",
-                            "loadBalancerBackendAddressPools": [
-                                {
-                                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_LB_WEB_name')), '/backendAddressPools/LB-backend-pool')]"
+                            ],
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_WEB1ip931_name'))]",
+                                "properties": {
+                                    "deleteOption": "Detach"
                                 }
-                            ]
+                            }
                         }
                     }
                 ],
@@ -517,6 +526,7 @@
             "name": "[parameters('networkInterfaces_web2_nic_name')]",
             "location": "eastus2",
             "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_WEB2_ip_name'))]",
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_eastus2_name'), 'SUBNET-WEB1')]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG_WEB1_name'))]",
                 "[resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_LB_WEB_name'))]"
@@ -537,7 +547,13 @@
                                 {
                                     "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_LB_WEB_name')), '/backendAddressPools/LB-backend-pool')]"
                                 }
-                            ]
+                            ],
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_WEB2_ip_name'))]",
+                                "properties": {
+                                    "deleteOption": "Detach"
+                                }
+                            }
                         }
                     }
                 ],
